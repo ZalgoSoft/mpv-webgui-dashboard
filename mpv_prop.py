@@ -486,7 +486,7 @@ async function getPropertyList() {
 }
 
 function groupProperties(properties) {
-    const groups = {
+    /*const groups = {
         'Playback': ['pause', 'speed', 'time-pos', 'duration', 'percent-pos', 'time-remaining', 'playback-time', 'eof-reached', 'seeking', 'core-idle'],
         'File & Stream': ['path', 'filename', 'media-title', 'file-size', 'file-format', 'stream-open-filename', 'stream-path', 'current-demuxer', 'demuxer-via-network', 'cache-speed', 'cache-buffering-state'],
         'Video': ['video-format', 'video-codec', 'video-params', 'width', 'height', 'dwidth', 'dheight', 'video-aspect-override', 'display-fps', 'estimated-vf-fps', 'container-fps', 'deinterlace-active', 'hwdec-current'],
@@ -496,7 +496,236 @@ function groupProperties(properties) {
         'Window & Display': ['fullscreen', 'window-scale', 'ontop', 'border', 'geometry', 'display-names', 'display-fps', 'focused', 'osd-width', 'osd-height'],
         'Options & Config': ['options', 'profile', 'config', 'config-dir', 'include', 'script-opts', 'watch-later-dir'],
         'MPV Info': ['mpv-version', 'ffmpeg-version', 'libass-version', 'platform', 'property-list', 'command-list', 'input-bindings']
-    };
+    };*/
+    const groups = {
+    // Основное состояние воспроизведения
+    'Playback State': ['pause', 'speed', 'pitch', 'time-pos', 'duration', 'percent-pos', 'time-remaining', 'playback-time', 'playtime-remaining', 'eof-reached', 'seeking', 'core-idle', 'idle-active', 'paused-for-cache', 'playback-abort', 'idle'],
+    
+    // Информация о файле и источнике
+    'File & Source': ['path', 'filename', 'media-title', 'file-size', 'file-format', 'stream-open-filename', 'stream-path', 'current-demuxer', 'working-directory', 'stream-pos', 'stream-end', 'file-local-options'],
+    
+    // Видео параметры
+    'Video Info': ['video-format', 'video-codec', 'video-params', 'video-out-params', 'video-dec-params', 'video-target-params', 'video-frame-info', 'width', 'height', 'dwidth', 'dheight', 'video-aspect-override', 'video-bitrate'],
+    
+    // Видео производительность
+    'Video Performance': ['display-fps', 'container-fps', 'estimated-vf-fps', 'estimated-display-fps', 'vsync-ratio', 'vsync-jitter', 'mistimed-frame-count', 'frame-drop-count', 'decoder-frame-drop-count', 'vo-delayed-frame-count', 'estimated-frame-count', 'estimated-frame-number', 'perf-info'],
+    
+    // Аудио параметры
+    'Audio Info': ['volume', 'mute', 'ao-volume', 'ao-mute', 'volume-gain', 'audio-codec', 'audio-codec-name', 'audio-params', 'audio-out-params', 'aid', 'audio-delay', 'audio-bitrate', 'mixer-active', 'current-ao'],
+    
+    // Аудио устройства
+    'Audio Devices': ['audio-device', 'audio-device-list', 'audio-exclusive', 'audio-fallback-to-null', 'audio-stream-silence', 'audio-wait-open', 'audio-client-name', 'audio-buffer', 'audio-set-media-role'],
+    
+    // Субтитры основные
+    'Subtitles Main': ['sid', 'sub-delay', 'sub-speed', 'sub-pos', 'sub-text', 'sub-start', 'sub-end', 'sub-visibility', 'secondary-sid', 'secondary-sub-delay', 'secondary-sub-pos', 'secondary-sub-text', 'secondary-sub-start', 'secondary-sub-end', 'secondary-sub-visibility'],
+    
+    // Субтитры ASS/SSA
+    'Subtitles ASS': ['sub-ass', 'sub-ass-extradata', 'sub-text-ass', 'sub-ass-style-overrides', 'sub-ass-styles', 'sub-ass-hinting', 'sub-ass-shaper', 'sub-ass-justify', 'sub-ass-override', 'sub-ass-force-style', 'sub-ass-force-margins', 'sub-ass-use-video-data', 'sub-ass-video-aspect-override', 'sub-ass-vsfilter-color-compat', 'sub-ass-scale-with-window', 'sub-ass-prune-delay', 'secondary-sub-ass-override'],
+    
+    // Субтитры стили
+    'Subtitles Style': ['sub-font', 'sub-font-size', 'sub-color', 'sub-outline-color', 'sub-back-color', 'sub-outline-size', 'sub-border-color', 'sub-shadow-color', 'sub-border-style', 'sub-border-size', 'sub-shadow-offset', 'sub-spacing', 'sub-margin-x', 'sub-margin-y', 'sub-align-x', 'sub-align-y', 'sub-blur', 'sub-bold', 'sub-italic', 'sub-justify', 'sub-scale', 'sub-scale-by-window', 'sub-scale-with-window', 'sub-line-spacing', 'sub-use-margins'],
+    
+    // Субтитры фильтры
+    'Subtitles Filters': ['sub-filter-sdh', 'sub-filter-sdh-harder', 'sub-filter-sdh-enclosures', 'sub-filter-regex-enable', 'sub-filter-regex-plain', 'sub-filter-regex', 'sub-filter-jsre', 'sub-filter-regex-warn'],
+    
+    // Треки и главы
+    'Tracks & Chapters': ['track-list', 'current-tracks', 'chapter', 'chapters', 'chapter-list', 'edition', 'editions', 'edition-list', 'chapter-metadata'],
+    
+    // Плейлист
+    'Playlist': ['playlist', 'playlist-path', 'playlist-pos', 'playlist-pos-1', 'playlist-current-pos', 'playlist-playing-pos', 'playlist-count', 'playlist-start', 'shuffle', 'loop-playlist', 'loop-file', 'loop'],
+    
+    // Метаданные
+    'Metadata': ['metadata', 'filtered-metadata', 'vf-metadata', 'af-metadata', 'media-title', 'title', 'force-media-title'],
+    
+    // Окно и геометрия
+    'Window & Geometry': ['fullscreen', 'fs', 'window-scale', 'current-window-scale', 'ontop', 'ontop-level', 'border', 'title-bar', 'geometry', 'autofit', 'autofit-larger', 'autofit-smaller', 'auto-window-resize', 'window-minimized', 'window-maximized', 'window-id', 'wid', 'focused'],
+    
+    // Позиционирование окна
+    'Window Position': ['screen', 'screen-name', 'fs-screen', 'fs-screen-name', 'monitoraspect', 'monitorpixelaspect', 'on-all-workspaces', 'force-window-position', 'force-window', 'snap-window', 'keepaspect', 'keepaspect-window'],
+    
+    // Дисплей и мониторы
+    'Display Info': ['display-names', 'display-width', 'display-height', 'display-fps', 'display-hidpi-scale', 'hidpi-window-scale', 'display-sync-active'],
+    
+    // Видео фильтры и трансформации
+    'Video Transform': ['video-zoom', 'video-pan-x', 'video-pan-y', 'video-align-x', 'video-align-y', 'video-scale-x', 'video-scale-y', 'video-crop', 'video-unscaled', 'video-recenter', 'panscan', 'video-rotate', 'deinterlace', 'deinterlace-active', 'deinterlace-field-parity'],
+    
+    // Видео margins
+    'Video Margins': ['video-margin-ratio-left', 'video-margin-ratio-right', 'video-margin-ratio-top', 'video-margin-ratio-bottom'],
+    
+    // Цветокоррекция
+    'Color Correction': ['brightness', 'saturation', 'contrast', 'hue', 'gamma', 'video-output-levels', 'colormatrix', 'colormatrix-input-range', 'colormatrix-primaries', 'colormatrix-gamma'],
+    
+    // HDR и tone mapping
+    'HDR & Tone Mapping': ['target-prim', 'target-trc', 'target-peak', 'hdr-reference-white', 'tone-mapping', 'tone-mapping-param', 'inverse-tone-mapping', 'tone-mapping-max-boost', 'tone-mapping-visualize', 'gamut-mapping-mode', 'hdr-compute-peak', 'hdr-peak-percentile', 'hdr-peak-decay-rate', 'hdr-scene-threshold-low', 'hdr-scene-threshold-high', 'hdr-contrast-recovery', 'hdr-contrast-smoothness', 'target-contrast', 'target-gamut', 'sdr-adjust-gamma', 'treat-srgb-as-power22'],
+    
+    // Аппаратное декодирование
+    'Hardware Decoding': ['hwdec', 'hwdec-current', 'hwdec-interop', 'hwdec-codecs', 'hwdec-extra-frames', 'hwdec-image-format', 'hwdec-software-fallback', 'hwdec-threads', 'gpu-hwdec-interop', 'vaapi-device', 'vd-lavc-dr'],
+    
+    // GPU и рендеринг
+    'GPU & Rendering': ['gpu-context', 'gpu-api', 'current-gpu-context', 'gpu-debug', 'gpu-sw', 'gpu-dumb-mode', 'vulkan-device', 'vulkan-swap-mode', 'vulkan-queue-count', 'vulkan-async-transfer', 'vulkan-async-compute', 'vulkan-display-display', 'vulkan-display-mode', 'vulkan-display-plane', 'drm-device', 'drm-connector', 'drm-mode', 'drm-draw-plane', 'drm-format', 'drm-vrr-enabled', 'opengl-pbo', 'opengl-es', 'opengl-early-flush'],
+    
+    // Скалеры и фильтры
+    'Scalers': ['scale', 'scale-param1', 'scale-param2', 'scale-blur', 'scale-taper', 'scale-clamp', 'scale-radius', 'scale-antiring', 'scale-window', 'dscale', 'cscale', 'tscale', 'scaler-resizes-only', 'correct-downscaling', 'linear-downscaling', 'linear-upscaling', 'sigmoid-upscaling', 'sigmoid-center', 'sigmoid-slope'],
+    
+    // Шейдеры и пост-обработка
+    'Shaders & Post-processing': ['glsl-shaders', 'glsl-shader-opts', 'deband', 'deband-iterations', 'deband-threshold', 'deband-range', 'deband-grain', 'sharpen', 'gpu-tex-pad-x', 'gpu-tex-pad-y', 'gpu-shader-cache', 'gpu-shader-cache-dir', 'background', 'background-color', 'background-blur-radius', 'border-background', 'corner-rounding', 'blend-subtitles'],
+    
+    // Интерполяция
+    'Interpolation': ['interpolation', 'interpolation-threshold', 'interpolation-preserve', 'video-sync', 'video-sync-max-video-change', 'video-sync-max-audio-change', 'video-sync-max-factor', 'video-timing-offset', 'autosync'],
+    
+    // ICC профили
+    'ICC Profiles': ['use-embedded-icc-profile', 'icc-profile', 'icc-profile-auto', 'icc-cache', 'icc-cache-dir', 'icc-intent', 'icc-force-contrast', 'icc-3dlut-size', 'icc-use-luma'],
+    
+    // LUT
+    'LUT': ['lut', 'lut-type', 'image-lut', 'image-lut-type', 'target-lut', 'target-colorspace-hint', 'target-colorspace-hint-mode', 'target-colorspace-hint-strict'],
+    
+    // Dithering
+    'Dithering': ['dither', 'dither-depth', 'dither-size-fruit', 'temporal-dither', 'temporal-dither-period', 'error-diffusion', 'fbo-format'],
+    
+    // Видео выход (VO)
+    'Video Output': ['vo', 'current-vo', 'vo-configured', 'vo-passes', 'display-swapchain', 'swapchain-depth'],
+    
+    // VO специфичные опции
+    'VO Specific': ['xv-port', 'xv-adaptor', 'xv-ck', 'xv-ck-method', 'xv-colorkey', 'xv-buffers', 'vo-vaapi-scaling', 'vo-vaapi-scaled-osd', 'vo-null-fps', 'vo-tct-algo', 'vo-tct-width', 'vo-tct-height', 'vo-tct-256', 'vo-tct-buffering', 'vo-sixel-dither', 'vo-sixel-width', 'vo-sixel-height', 'vo-kitty-width', 'vo-kitty-height'],
+    
+    // Аудио выход (AO)
+    'Audio Output': ['ao', 'current-ao', 'audio-exclusive', 'audio-fallback-to-null'],
+    
+    // PulseAudio
+    'PulseAudio': ['pulse-host', 'pulse-buffer', 'pulse-latency-hacks', 'pulse-allow-suspended'],
+    
+    // ALSA
+    'ALSA': ['alsa-resample', 'alsa-mixer-device', 'alsa-mixer-name', 'alsa-mixer-index', 'alsa-non-interleaved', 'alsa-ignore-chmap', 'alsa-buffer-time', 'alsa-periods'],
+    
+    // JACK
+    'JACK': ['jack-port', 'jack-name', 'jack-autostart', 'jack-connect', 'jack-std-channel-layout'],
+    
+    // PipeWire
+    'PipeWire': ['pipewire-buffer', 'pipewire-remote', 'pipewire-volume-mode'],
+    
+    // AO Null
+    'AO Null': ['ao-null-untimed', 'ao-null-buffer', 'ao-null-outburst', 'ao-null-speed', 'ao-null-latency', 'ao-null-broken-eof', 'ao-null-broken-delay', 'ao-null-channel-layouts', 'ao-null-format'],
+    
+    // AO PCM
+    'AO PCM': ['ao-pcm-file', 'ao-pcm-waveheader', 'ao-pcm-append'],
+    
+    // Демультиплексор
+    'Demuxer': ['demuxer', 'current-demuxer', 'demuxer-via-network', 'demuxer-start-time', 'demuxer-cache-state', 'demuxer-cache-duration', 'demuxer-cache-time', 'demuxer-cache-idle', 'demuxer-thread', 'demuxer-readahead-secs', 'demuxer-hysteresis-secs', 'demuxer-max-bytes', 'demuxer-max-back-bytes', 'demuxer-donate-buffer', 'demuxer-seekable-cache', 'demuxer-backward-playback-step'],
+    
+    // Demuxer lavf
+    'Demuxer lavf': ['demuxer-lavf-list', 'demuxer-lavf-probesize', 'demuxer-lavf-probe-info', 'demuxer-lavf-format', 'demuxer-lavf-analyzeduration', 'demuxer-lavf-buffersize', 'demuxer-lavf-allow-mimetype', 'demuxer-lavf-probescore', 'demuxer-lavf-hacks', 'demuxer-lavf-o', 'demuxer-lavf-linearize-timestamps', 'demuxer-lavf-propagate-opts'],
+    
+    // Demuxer raw
+    'Demuxer Raw': ['demuxer-rawaudio-channels', 'demuxer-rawaudio-rate', 'demuxer-rawaudio-format', 'demuxer-rawvideo-w', 'demuxer-rawvideo-h', 'demuxer-rawvideo-format', 'demuxer-rawvideo-mp-format', 'demuxer-rawvideo-codec', 'demuxer-rawvideo-fps', 'demuxer-rawvideo-size'],
+    
+    // Demuxer mkv
+    'Demuxer MKV': ['demuxer-mkv-subtitle-preroll', 'demuxer-mkv-subtitle-preroll-secs', 'demuxer-mkv-subtitle-preroll-secs-index', 'demuxer-mkv-probe-video-duration', 'demuxer-mkv-probe-start-time', 'demuxer-mkv-crop-compat'],
+    
+    // Кеширование
+    'Cache': ['cache', 'cache-speed', 'cache-buffering-state', 'cache-pause', 'cache-pause-initial', 'cache-pause-wait', 'cache-secs', 'cache-on-disk', 'demuxer-cache-wait', 'demuxer-cache-dir', 'demuxer-cache-unlink-files'],
+    
+    // Декодеры видео
+    'Video Decoder': ['vd', 'vd-lavc-fast', 'vd-lavc-film-grain', 'vd-lavc-show-all', 'vd-lavc-skiploopfilter', 'vd-lavc-skipidct', 'vd-lavc-skipframe', 'vd-lavc-framedrop', 'vd-lavc-threads', 'vd-lavc-bitexact', 'vd-lavc-assume-old-x264', 'vd-lavc-check-hw-profile', 'vd-lavc-o', 'vd-lavc-software-fallback', 'vd-apply-cropping'],
+    
+    // Декодеры аудио
+    'Audio Decoder': ['ad', 'ad-lavc-ac3drc', 'ad-lavc-downmix', 'ad-lavc-threads', 'ad-lavc-o', 'audio-spdif'],
+    
+    // Очереди декодеров
+    'Decoder Queues': ['vd-queue-enable', 'vd-queue-max-secs', 'vd-queue-max-bytes', 'vd-queue-max-samples', 'ad-queue-enable', 'ad-queue-max-secs', 'ad-queue-max-bytes', 'ad-queue-max-samples'],
+    
+    // OSD
+    'OSD': ['osd-level', 'osd-width', 'osd-height', 'osd-par', 'osd-dimensions', 'osd-scale', 'osd-scale-by-window', 'video-osd', 'osd-bar', 'osd-on-seek', 'osd-duration', 'osd-fractions'],
+    
+    // OSD стили
+    'OSD Style': ['osd-font', 'osd-font-size', 'osd-color', 'osd-outline-color', 'osd-back-color', 'osd-outline-size', 'osd-border-color', 'osd-shadow-color', 'osd-border-style', 'osd-border-size', 'osd-shadow-offset', 'osd-spacing', 'osd-margin-x', 'osd-margin-y', 'osd-align-x', 'osd-align-y', 'osd-blur', 'osd-bold', 'osd-italic', 'osd-justify', 'osd-font-provider', 'osd-fonts-dir', 'osd-shaper'],
+    
+    // OSD сообщения
+    'OSD Messages': ['osd-playing-msg', 'osd-playing-msg-duration', 'osd-status-msg', 'osd-msg1', 'osd-msg2', 'osd-msg3', 'osd-playlist-entry'],
+    
+    // OSD bar
+    'OSD Bar': ['osd-bar-align-x', 'osd-bar-align-y', 'osd-bar-w', 'osd-bar-h', 'osd-bar-outline-size', 'osd-bar-border-size', 'osd-bar-marker-scale', 'osd-bar-marker-min-size', 'osd-bar-marker-style'],
+    
+    // Терминал
+    'Terminal': ['terminal', 'term-osd', 'term-osd-bar', 'term-osd-bar-chars', 'term-title', 'term-playing-msg', 'term-status-msg', 'term-size', 'term-clip-cc', 'quiet', 'really-quiet', 'msg-level', 'msg-color', 'msg-module', 'msg-time'],
+    
+    // Скриншоты
+    'Screenshots': ['screenshot-template', 'screenshot-dir', 'screenshot-directory', 'screenshot-sw', 'screenshot-format', 'screenshot-jpeg-quality', 'screenshot-jpeg-source-chroma', 'screenshot-png-compression', 'screenshot-png-filter', 'screenshot-webp-lossless', 'screenshot-webp-quality', 'screenshot-webp-compression', 'screenshot-jxl-distance', 'screenshot-jxl-effort', 'screenshot-avif-encoder', 'screenshot-avif-opts', 'screenshot-avif-pixfmt', 'screenshot-high-bit-depth', 'screenshot-tag-colorspace'],
+    
+    // Ввод и управление
+    'Input': ['input-conf', 'input-key-list', 'input-bindings', 'input-default-bindings', 'input-builtin-bindings', 'input-builtin-dragging', 'input-ar-delay', 'input-ar-rate', 'input-doubleclick-time', 'input-right-alt-gr', 'input-key-fifo-size', 'input-cursor', 'input-cursor-passthrough', 'input-vo-keyboard', 'input-media-keys', 'input-preprocess-wheel', 'input-ime', 'input-test'],
+    
+    // Мышь и тач
+    'Mouse & Touch': ['mouse-pos', 'touch-pos', 'tablet-pos', 'input-touch-emulate-mouse', 'input-tablet-emulate-mouse', 'input-dragging-deadzone', 'window-dragging', 'cursor-autohide', 'cursor-autohide-fs-only', 'drag-and-drop', 'native-touch'],
+    
+    // Сеть и стриминг
+    'Network & Streaming': ['demuxer-via-network', 'http-header-fields', 'user-agent', 'referrer', 'cookies', 'cookies-file', 'tls-verify', 'tls-ca-file', 'tls-cert-file', 'tls-key-file', 'network-timeout', 'http-proxy', 'rtsp-transport', 'hls-bitrate', 'stream-lavf-o', 'stream-record', 'stream-buffer-size', 'stream-dump'],
+    
+    // yt-dlp / youtube-dl
+    'YouTube-DL': ['ytdl', 'ytdl-format', 'ytdl-raw-options'],
+    
+    // DVD/Blu-ray/CD
+    'Optical Media': ['dvd-device', 'dvd-speed', 'dvd-angle', 'bluray-device', 'bluray-angle', 'cdda-device', 'cdda-speed', 'cdda-paranoia', 'cdda-sector-size', 'cdda-overlap', 'cdda-toc-offset', 'cdda-skip', 'cdda-span-a', 'cdda-span-b', 'cdda-cdtext'],
+    
+    // DVB
+    'DVB': ['dvbin-prog', 'dvbin-card', 'dvbin-timeout', 'dvbin-file', 'dvbin-full-transponder', 'dvbin-channel-switch-offset'],
+    
+    // Loop и AB
+    'Loop & AB': ['ab-loop-a', 'ab-loop-b', 'ab-loop-count', 'loop', 'loop-file', 'loop-playlist', 'remaining-file-loops', 'remaining-ab-loops'],
+    
+    // Seek
+    'Seek': ['seekable', 'partially-seekable', 'hr-seek', 'hr-seek-demuxer-offset', 'hr-seek-framedrop', 'force-seekable'],
+    
+    // Главы
+    'Chapters': ['chapter', 'chapters', 'chapter-list', 'ordered-chapters', 'ordered-chapters-files', 'chapter-merge-threshold', 'chapter-seek-threshold', 'chapters-file', 'merge-files'],
+    
+    // Watch Later и resume
+    'Watch Later': ['watch-later-dir', 'watch-later-directory', 'watch-later-options', 'current-watch-later-dir', 'resume-playback', 'resume-playback-check-mtime', 'save-position-on-quit', 'write-filename-in-watch-later-config', 'ignore-path-in-watch-later-config', 'save-watch-history', 'watch-history-path'],
+    
+    // ReplayGain
+    'ReplayGain': ['replaygain', 'replaygain-preamp', 'replaygain-clip', 'replaygain-fallback'],
+    
+    // Синхронизация
+    'Sync': ['avsync', 'total-avsync-change', 'audio-pts', 'clock', 'audio-speed-correction', 'video-speed-correction', 'initial-audio-sync', 'correct-pts', 'framedrop', 'video-latency-hacks', 'untimed'],
+    
+    // Аудио ресемплинг
+    'Audio Resample': ['audio-samplerate', 'audio-channels', 'audio-format', 'audio-pitch-correction', 'audio-normalize-downmix', 'audio-resample-filter-size', 'audio-resample-phase-shift', 'audio-resample-linear', 'audio-resample-cutoff', 'audio-resample-max-output-size', 'audio-swresample-o', 'gapless-audio'],
+    
+    // SWScale и zimg
+    'SWScale & zimg': ['sws-scaler', 'sws-lgb', 'sws-cgb', 'sws-cvs', 'sws-chs', 'sws-ls', 'sws-cs', 'sws-fast', 'sws-bitexact', 'sws-allow-zimg', 'zimg-scaler', 'zimg-scaler-param-a', 'zimg-scaler-param-b', 'zimg-scaler-chroma', 'zimg-scaler-chroma-param-a', 'zimg-scaler-chroma-param-b', 'zimg-dither', 'zimg-fast', 'zimg-threads'],
+    
+    // Wayland
+    'Wayland': ['wayland-app-id', 'wayland-configure-bounds', 'wayland-content-type', 'wayland-disable-vsync', 'wayland-internal-vsync', 'wayland-edge-pixels-pointer', 'wayland-edge-pixels-touch', 'wayland-present'],
+    
+    // X11
+    'X11': ['x11-name', 'x11-netwm', 'x11-bypass-compositor', 'x11-present', 'x11-wid-title', 'stop-screensaver'],
+    
+    // Конфигурация и опции
+    'Config': ['config', 'config-dir', 'include', 'profile', 'profile-list', 'options', 'option-info', 'script-opts', 'use-filedir-conf', 'reset-on-next-file', 'load-scripts'],
+    
+    // Скрипты
+    'Scripts': ['scripts', 'load-scripts', 'osc', 'load-stats-overlay', 'load-console', 'load-osd-console', 'load-auto-profiles', 'load-select', 'load-positioning', 'load-commands', 'load-context-menu'],
+    
+    // Внешние файлы
+    'External Files': ['sub-files', 'audio-files', 'cover-art-files', 'external-files', 'autoload-files', 'sub-file-paths', 'audio-file-paths'],
+    
+    // Автовыбор
+    'Auto Selection': ['alang', 'slang', 'vlang', 'track-auto-selection', 'sub-auto', 'sub-auto-exts', 'audio-file-auto', 'audio-exts', 'audio-file-auto-exts', 'cover-art-auto', 'image-exts', 'cover-art-auto-exts', 'cover-art-whitelist', 'video-exts', 'archive-exts', 'playlist-exts', 'subs-with-matching-audio', 'subs-match-os-language', 'subs-fallback', 'subs-fallback-forced'],
+    
+    // Разное
+    'Misc': ['pid', 'keep-open', 'keep-open-pause', 'image-display-duration', 'force-window', 'volume-max', 'volume-gain-max', 'volume-gain-min', 'mc', 'sstep', 'stop-playback-on-init-failure', 'directory-mode', 'directory-filter-types', 'index', 'mf-fps', 'mf-type', 'autocreate-playlist', 'rar-list-all-volumes', 'load-unsafe-playlists', 'access-references'],
+    
+    // Кодирование
+    'Encoding': ['o', 'of', 'ofopts', 'ovc', 'ovcopts', 'oac', 'oacopts', 'orawts', 'ocopy-metadata', 'oset-metadata', 'oremove-metadata'],
+    
+    // Clipboard
+    'Clipboard': ['clipboard', 'current-clipboard-backend', 'clipboard-monitor', 'clipboard-xwayland', 'clipboard-backends'],
+    
+    // Информация о MPV
+    'MPV Info': ['mpv-version', 'mpv-configuration', 'ffmpeg-version', 'libass-version', 'platform', 'property-list', 'command-list', 'protocol-list', 'decoder-list', 'encoder-list', 'input-key-list', 'profile-list', 'input-bindings', 'menu-data', 'user-data'],
+    
+    // Устаревшие/алиасы
+    'Deprecated/Aliases': ['fs', 'sstep', 'wid', 'ontop', 'playlist-pos-1', 'sub-forced-only-cur', 'audio-display', 'display-tags', 'sub-codepage', 'native-fs', 'native-keyrepeat', 'force-render', 'vo-image-outdir', 'vo-image-format', 'vo-image-jpeg-quality', 'vo-image-png-compression', 'vo-image-high-bit-depth', 'vo-image-tag-colorspace', 'override-display-fps', 'video', 'audio', 'sub', 'frames', 'start', 'end', 'length', 'play-dir', 'lavfi-complex', 'audio-demuxer', 'sub-demuxer', 'prefetch-playlist', 'sub-create-cc-track', 'video-backward-overlap', 'audio-backward-overlap', 'video-backward-batch', 'audio-backward-batch', 'metadata-codepage', 'gamma-factor', 'gamma-auto', 'opengl-glfinish', 'opengl-waitvsync', 'opengl-swapinterval', 'opengl-check-pattern-a', 'opengl-check-pattern-b', 'egl-config-id', 'egl-output-format', 'opengl-rectangle-textures', 'background-tile-color-0', 'background-tile-color-1', 'background-tile-size', 'libplacebo-opts', 'spirv-compiler', 'sub-hdr-peak', 'image-subs-hdr-peak', 'allow-delayed-peak-detect', 'drm-drmprime-video-plane', 'drm-draw-surface-size', 'vf', 'af', 'osd-sym-cc', 'osd-ass-cc', 'ambient-light', 'media-controls', 'dump-stats', 'log-file', 'display-tags', 'play-direction', 'rebase-start-time', 'force-seekable', 'demuxer-termination-timeout', 'stretch-dvd-subs', 'stretch-image-subs-to-screen', 'image-subs-video-resolution', 'sub-fix-timing', 'sub-fix-timing-threshold', 'sub-fix-timing-keep', 'sub-stretch-durations', 'sub-gauss', 'sub-gray', 'sub-scale-signs', 'sub-ass-line-spacing', 'sub-vsfilter-bidi-compat', 'embeddedfonts', 'sub-hinting', 'sub-shaper', 'sub-clear-on-seek', 'teletext-page', 'sub-past-video-end', 'sub-lavc-o', 'sub-glyph-limit', 'sub-bitmap-max-size', 'sub-font-provider', 'sub-fonts-dir', 'osd-selected-color', 'osd-selected-outline-color', 'force-rgba-osd-rendering', 'osd-prune-delay', 'osd-glyph-limit', 'osd-bitmap-max-size', 'osd-font-provider', 'osd-fonts-dir']
+};
     
     const grouped = {};
     const assigned = new Set();
