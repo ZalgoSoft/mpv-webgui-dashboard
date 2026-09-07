@@ -805,3 +805,190 @@ This tool is for educational purposes only. Please respect YouTube's Terms of Se
 - [youtube-dl](https://github.com/ytdl-org/youtube-dl) project
 - [mpv](https://mpv.io/) media player
 - [curl](https://curl.se/) project
+
+
+
+# MPV Web Panel
+
+> A modern, feature-rich web-based control panel for [mpv](https://mpv.io/) media player via JSON IPC.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
+
+## ✨ Features
+
+- **📋 Commands Browser** – View and execute all available mpv commands with argument validation
+- **⚙️ Properties Manager** – Browse, view, and modify mpv properties with type-aware controls
+- **⌨️ Bindings Viewer** – Explore input bindings and execute them with one click
+- **🔄 Auto-Update** – Real-time property value monitoring with toggle controls
+- **🎯 Smart Controls** – Range sliders, color pickers, checkboxes, and dropdowns based on property type
+- **🔍 Search & Filter** – Quickly find commands, properties, or bindings
+- **📊 Progress Tracking** – Visual feedback during data collection
+- **📱 Responsive** – Works on desktop and mobile devices
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.6 or higher
+- mpv running with JSON IPC enabled
+
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/ZalgoSoft/mpv-webgui-dashboard.git
+cd mpv-webgui-dashboard
+```
+
+2. **Start mpv with IPC socket**
+```bash
+mpv --input-ipc-server=/tmp/mpv-web-socket your-video.mp4
+```
+
+3. **Run the web panel**
+```bash
+python3 mpvweb.py
+```
+
+4. **Open your browser**
+```
+http://localhost:8082
+```
+
+## 🎮 Usage
+
+### Commands Tab
+- Browse all available mpv commands
+- Each command shows its arguments with appropriate input controls:
+  - **Sliders** for numeric ranges
+  - **Checkboxes** for flags
+  - **Color pickers** for color values
+  - **Dropdowns** for choices
+  - **Text inputs** for strings
+- Click **Execute** to run any command
+
+### Properties Tab
+- View all mpv properties with current values
+- Edit properties using type-appropriate controls
+- **Auto-update** – Toggle real-time monitoring for individual properties
+- **Visible Update** – Auto-refresh only visible properties (click the 👁 button)
+- Filter by property type (String, Integer, Float, Choice, Flag, Color)
+
+### Bindings Tab
+- View all input bindings
+- Click **Execute** to trigger any binding
+
+## 🔧 Configuration
+
+Edit the configuration section in `mpvweb.py`:
+
+```python
+MPV_SOCKET = "/tmp/mpv-web-socket"  # IPC socket path
+HOST = "0.0.0.0"                     # Bind address
+PORT = 8082                          # HTTP port
+DEBUG = False                        # Enable debug logging
+```
+
+## 📡 API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/status` | GET | Get update status and progress |
+| `/api/commands` | GET | List all available commands |
+| `/api/properties` | GET | List all properties with info and values |
+| `/api/bindings` | GET | List all input bindings |
+| `/api/property/value` | GET | Get specific property value |
+| `/api/command/execute` | POST | Execute a command |
+| `/api/property/set` | POST | Set a property value |
+| `/api/auto-update/toggle` | POST | Toggle auto-update for a property |
+| `/api/update` | POST | Trigger full data refresh |
+
+## 🏗️ Architecture
+
+
+## 📸 Screenshots
+![pics21.png](pics21.png)
+![pics22.png](pics22.png)
+![pics23.png](pics23.png)
+
+```
+┌─────────────────┐     HTTP/Web     ┌─────────────────┐
+│   Web Browser   │ ◄──────────────► │  Python Server  │
+│   (HTML/JS)     │                   │  (HTTPHandler)  │
+└─────────────────┘                   └────────┬────────┘
+                                               │ JSON IPC
+                                               ▼
+                                      ┌─────────────────┐
+                                      │   mpv Process   │
+                                      │ (--ipc-server)  │
+                                      └─────────────────┘
+```
+
+## 🎨 UI Preview
+
+![MPV Web Panel Screenshot](https://via.placeholder.com/800x400?text=MPV+Web+Panel+Screenshot)
+
+*The panel features a clean, modern interface with three main tabs for commands, properties, and bindings.*
+
+## 🤝 Contributing
+
+Contributions are welcome! Here's how you can help:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development
+
+```bash
+# Enable debug mode for detailed logging
+# Edit mpvweb.py: DEBUG = True
+```
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ⚠️ Troubleshooting
+
+### Socket Not Found
+```
+WARNING: Socket /tmp/mpv-web-socket not found
+```
+**Solution:** Start mpv with the IPC server option:
+```bash
+mpv --input-ipc-server=/tmp/mpv-web-socket
+```
+
+### Connection Refused
+```
+MPV error: [Errno 111] Connection refused
+```
+**Solution:** Ensure mpv is running and the socket path is correct.
+
+### Permission Denied
+```
+MPV error: [Errno 13] Permission denied
+```
+**Solution:** Check file permissions on the socket or run with appropriate privileges.
+
+## 🔮 Future Enhancements
+
+- [ ] Playlist management
+- [ ] Audio/Video filter controls
+- [ ] Custom command presets
+- [ ] Keyboard shortcuts for the web interface
+- [ ] Session persistence
+- [ ] Multiple mpv instance support
+
+## 🙏 Acknowledgments
+
+- [mpv](https://mpv.io/) – The awesome media player
+- All contributors and users of this project
+
+---
+
+Made with ❤️ by [ZalgoSoft](https://github.com/ZalgoSoft)
