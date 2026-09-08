@@ -486,18 +486,7 @@ async function getPropertyList() {
 }
 
 function groupProperties(properties) {
-    /*const groups = {
-        'Playback': ['pause', 'speed', 'time-pos', 'duration', 'percent-pos', 'time-remaining', 'playback-time', 'eof-reached', 'seeking', 'core-idle'],
-        'File & Stream': ['path', 'filename', 'media-title', 'file-size', 'file-format', 'stream-open-filename', 'stream-path', 'current-demuxer', 'demuxer-via-network', 'cache-speed', 'cache-buffering-state'],
-        'Video': ['video-format', 'video-codec', 'video-params', 'width', 'height', 'dwidth', 'dheight', 'video-aspect-override', 'display-fps', 'estimated-vf-fps', 'container-fps', 'deinterlace-active', 'hwdec-current'],
-        'Audio': ['volume', 'mute', 'audio-codec', 'audio-codec-name', 'audio-params', 'audio-device', 'aid', 'audio-delay', 'current-ao'],
-        'Subtitles': ['sid', 'sub-delay', 'sub-speed', 'sub-pos', 'sub-text', 'sub-start', 'sub-end', 'secondary-sid', 'sub-visibility'],
-        'Track Info': ['track-list', 'current-tracks', 'chapter', 'chapters', 'edition', 'editions', 'playlist', 'playlist-pos', 'playlist-count'],
-        'Window & Display': ['fullscreen', 'window-scale', 'ontop', 'border', 'geometry', 'display-names', 'display-fps', 'focused', 'osd-width', 'osd-height'],
-        'Options & Config': ['options', 'profile', 'config', 'config-dir', 'include', 'script-opts', 'watch-later-dir'],
-        'MPV Info': ['mpv-version', 'ffmpeg-version', 'libass-version', 'platform', 'property-list', 'command-list', 'input-bindings']
-    };*/
-    const groups = {
+const groups = {
     // Основное состояние воспроизведения
     'Playback State': ['pause', 'speed', 'pitch', 'time-pos', 'duration', 'percent-pos', 'time-remaining', 'playback-time', 'playtime-remaining', 'eof-reached', 'seeking', 'core-idle', 'idle-active', 'paused-for-cache', 'playback-abort', 'idle'],
     
@@ -920,6 +909,7 @@ async function getAllProperties() {
     }
     
     document.getElementById('status').innerHTML = `<span class="success">Updated ${updatedCount} property values</span>`;
+    togglePropertiesGrid();
 }
 
 // ========== ФИЛЬТРАЦИЯ СВОЙСТВ ==========
@@ -963,6 +953,82 @@ function toggleAllGroups(expand = true) {
     });
 }
 
+function toggleTopGroups(expand = true) {
+    if (typeof toggleTopGroups.currentLevel === 'undefined') {
+        toggleTopGroups.currentLevel = 3;
+    }
+
+    const items = [];
+    document.querySelectorAll('.nested-content').forEach(el => {
+        let depth = 0;
+        let parent = el.parentElement;
+        while (parent) {
+            if (parent.classList.contains('nested-content')) {
+                depth++;
+            }
+            parent = parent.parentElement;
+        }
+        items.push({ element: el, depth });
+    });
+
+    if (items.length === 0) return;
+
+    const maxDepth = Math.max(...items.map(item => item.depth));
+
+    if (expand) {
+        if (toggleTopGroups.currentLevel >= maxDepth) {
+            console.log('Уже всё раскрыто');
+            return;
+        }
+        
+        const nextLevel = toggleTopGroups.currentLevel + 1;
+        
+        items.forEach(({ element, depth }) => {
+            if (depth <= nextLevel) {
+                element.style.display = 'block';
+            }
+        });
+        
+        toggleTopGroups.currentLevel = nextLevel;
+        console.log(`Раскрыто до уровня ${nextLevel}`);
+        
+    } else {
+        if (toggleTopGroups.currentLevel <= -1) {
+            console.log('Уже всё схлопнуто');
+            return;
+        }
+        
+        const prevLevel = toggleTopGroups.currentLevel - 1;
+        
+        items.forEach(({ element, depth }) => {
+            if (depth > prevLevel) {
+                element.style.display = 'none';
+            }
+        });
+        
+        toggleTopGroups.currentLevel = prevLevel;
+        console.log(`Схлопнуто до уровня ${prevLevel}`);
+    }
+}
+function togglePropertiesGrid() {
+    const groupContainers = document.querySelectorAll('.group-header');
+    
+    groupContainers.forEach(container => {
+        container.addEventListener('click', function(e) {
+            // Находим дочерний элемент с классом properties-grid
+            //const propertiesGrid = this.querySelector('.properties-grid');
+            const propertiesGrid = this.nextElementSibling;        
+            if (propertiesGrid) {
+                // Переключаем display
+                if (propertiesGrid.style.display === 'none') {
+                    propertiesGrid.style.display = '';
+                } else {
+                    propertiesGrid.style.display = 'none';
+                }
+            }
+        });
+    });
+}
 // ========== ИНИЦИАЛИЗАЦИЯ ==========
 window.onload = () => {
     getPropertyList();
@@ -985,8 +1051,18 @@ window.onload = () => {
     collapseAllBtn.textContent = 'Collapse All';
     collapseAllBtn.onclick = () => toggleAllGroups(false);
     
+    const expandTopBtn = document.createElement('button');
+    expandTopBtn.textContent = 'Expand';
+    expandTopBtn.onclick = () => toggleTopGroups(true);
+
+    const collapseTopBtn = document.createElement('button');
+    collapseTopBtn.textContent = 'Collapse';
+    collapseTopBtn.onclick = () => toggleTopGroups(false);
+
     controls.appendChild(expandAllBtn);
     controls.appendChild(collapseAllBtn);
+    controls.appendChild(expandTopBtn);
+    controls.appendChild(collapseTopBtn);
 };
     </script>
 </body>
